@@ -6,11 +6,16 @@ import (
 	"unicode"
     "os"
     "bufio"
-    "io"
+    "io/ioutil"
     "golang.org/x/net/idna"
 )
 
 type ParsedUrl string
+
+type namedtuple struct {
+    a string 
+    b interface {}
+}
 
 var __all__ = []string {"URL", "SplitResult", "parse", "extract", "construct", "normalize",
            "compare", "normalize_host", "normalize_path", "normalize_query",
@@ -28,31 +33,32 @@ func get_public_suffix_list() {
     imported.
     */
     local_psl := os.Getenv("PUBLIC_SUFFIX_LIST")
-    if local_psl.length > 0 {
+    if len(local_psl) > 0 {
         //Read in the input credentials 
-        input := bufio.NewScanner(io.Reader(local_psl))
-        psl_raw := input.Scan()
+        psl_raw, err := ioutil.ReadFile(local_psl)
+        psl_raw = []byte(psl_raw)
         fmt.Println(psl_raw)
-
     } else {
         fmt.Println("Error, couldn't read from the scanner")
     }
 }
 
 
-var SplitResult = namedtuple("SplitResult", []string{"scheme", "netloc", "path", "query",
-                                         "fragment"})
-var URL = namedtuple("URL", []string{"scheme", "username", "password", "subdomain",
+var SplitResult =[]string{"scheme", "netloc", "path", "query",
+                                         "fragment",}
+
+var URL = []string{"scheme", "username", "password", "subdomain",
                          "domain", "tld", "port", "path", "query", "fragment",
-                         "url",})
-
-
+                         "url",}
 
 var SCHEMES = []string {"http", "https", "ftp", "sftp", "file", "gopher", "imap", "mms",
            "news", "nntp", "telnet", "prospero", "rsync", "rtsp", "rtspu",
            "svn", "git", "ws", "wss",}
+
 var SCHEME_CHARS string = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
 var IP_CHARS string = "0123456789.:"
+
 var DEFAULT_PORT = map[string]string {
     "http": "80",
     "https": "443",
@@ -62,15 +68,14 @@ var DEFAULT_PORT = map[string]string {
     "sftp": "22",
     "ldap": "389",
 }
+
 var QUOTE_EXCEPTIONS = map[string]string {
     "path": " /?+#",
     "query": " &=+#",
     "fragment": " +#",
 }
 
-type namedtuple struct {
-    a , b interface{}
-}
+
 
 func main() {
 	normalize(" http://  ")
@@ -86,34 +91,39 @@ func normalize(url string) {
 
 }
 
-func normalize_port(scheme string, port string) {
+func normalize_port(scheme string, port string) string {
    /* Return port if it is not default port, else None.
-    >>> normalize_port('http', '80')
-    >>> normalize_port('http', '8080')
-    '8080'
+      >>> normalize_port("http", "80")
+      >>> normalize_port("http", "8080")
+      '8080'
     */
-    if SCHEMES[scheme]{
+    if stringInSlice(scheme,SCHEMES){
         return port
     }
-    if DEFAULT_PORT[port] && port != DEFAULT_PORT[scheme]{
-        return port
+    port_scheme := DEFAULT_PORT[scheme]
+    if DEFAULT_PORT[port] != "" && port != port_scheme {
+        return port 
     }
+    return port
 }
 
-func normalize_host(host string) {
+func normalize_host(host string) string{
    // Normalize host (decode IDNA).
     if strings.Contains(host, "xn--") {
         return host
     }
-    split_arr := strings.Split(host,'.')
-    decoded_str := '.'
+    split_arr := strings.Split(host,".")
+    decoded_str := "."
     for _, v := range split_arr {
-        decoded_str += _idna_decode(decoded_split)
+        decoded_str += _idna_encode(v)
     }
+    host = decoded_str
+    return host
 }
 
-func _idna_encode(s string){
-    return idna.ToUnicode(s)
+func _idna_encode(s string) string{
+    encoded_str,_ := idna.ToUnicode(s)
+    return encoded_str
 }
 
 func parameterize_url() {
@@ -143,72 +153,88 @@ func File2lines(filePath string) []string {
 /*
  Splits the url into the constituent elements 
 */
-func split(url string) {
+func split(url string) (scheme, netloc, path, query, fragment string) {
     /* Split URL into scheme, netloc, path, query and fragment.
     >>> split('http://www.example.com/abc?x=1&y=2#foo')
     SplitResult(scheme='http', netloc='www.example.com', path='/abc', query='x=1&y=2', fragment='foo')
     */
-    var scheme string  = ""
-    var path string = ""
-    var query string = ""
-    var fragment string = ""
+    // var scheme string  = ""
+    // var path string = ""
+    // var query string = ""
+    // var fragment string = ""
+    var rest string = ""
+    // var netloc string = ""
 
-    ip6_start = url.find('[')
-    scheme_end = url.find(':')
+    ip6_start := strings.Index(url,"[")
+    scheme_end := strings.Index(url,":")
     if ip6_start > 0 && ip6_start < scheme_end {
         scheme_end = -1
     }
     if scheme_end > 0 {
-        for c in url[:scheme_end]{
-            if !SCHEME_CHARS[c]{
+        substring := url[:scheme_end]
+        for i := 0; i < len(substring); i++ {
+            sub_str := substring[i]
+            if strings.Contains(SCHEME_CHARS, sub_str) {
                 break
             }
         }
-        else{
-            scheme = url[:scheme_end].lower()
-            rest = url[scheme_end:].lstrip(':/')
-        }
+    } else if scheme_end < 0 {
+        scheme = strings.ToLower(url[:scheme_end])
+        main_str := url[scheme_end:]
+        parts := strings.Split(main_str, ":/")
+        rest = parts[1]
     }
-    if not scheme:
+
+    if len(scheme) < 1 {
         rest = url
-    l_path = rest.find('/')
-    l_query = rest.find('?')
-    l_frag = rest.find('#')
-    if l_path > 0:
-        if l_query > 0 and l_frag > 0:
+    }
+    l_path := strings.Index(rest, "/")
+    l_query := strings.Index(rest, "?")
+    l_frag := strings.Index(rest, "#")
+
+    if l_path > 0 {
+        if l_query > 0 && l_frag > 0 {
             netloc = rest[:l_path]
             path = rest[l_path:min(l_query, l_frag)]
-        elif l_query > 0:
-            if l_query > l_path:
+        } else if l_query > 0 { 
+            if l_query > l_path{
                 netloc = rest[:l_path]
                 path = rest[l_path:l_query]
-            else:
+            } else{
                 netloc = rest[:l_query]
-                path = ''
-        elif l_frag > 0:
+                path = ""
+            }
+        } else if l_frag > 0 {
             netloc = rest[:l_path]
             path = rest[l_path:l_frag]
-        else:
+        } else {
             netloc = rest[:l_path]
             path = rest[l_path:]
-    else:
-        if l_query > 0:
+        }
+    } else {
+        if l_query > 0 {
             netloc = rest[:l_query]
-        elif l_frag > 0:
+        } else if l_frag > 0 {
             netloc = rest[:l_frag]
-        else:
+        } else {
             netloc = rest
-    if l_query > 0:
-        if l_frag > 0:
+        }
+    }
+    if l_query > 0 {
+        if l_frag > 0 {
             query = rest[l_query+1:l_frag]
-        else:
+        } else {
             query = rest[l_query+1:]
-    if l_frag > 0:
+        }
+    }
+    if l_frag > 0 {
         fragment = rest[l_frag+1:]
-    if not scheme:
+    }
+    if len(scheme) < 1 {
         path = netloc + path
-        netloc = ''
-    return SplitResult(scheme, netloc, path, query, fragment)
+        netloc = ""
+    }
+    return 
 
 }
 
@@ -220,4 +246,24 @@ func SpaceMap(str string) string {
         }
         return r
     }, str)
+}
+
+//Check if string is in an array
+func stringInSlice(a string, list []string) bool {
+    for _, b := range list {
+        if b == a {
+            return true
+        }
+    }
+    return false
+}
+
+/*
+    Returns the minimum between two integers
+*/
+func min(a, b int) int {
+    if a < b {
+        return a
+    }
+    return b
 }
