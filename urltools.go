@@ -5,6 +5,7 @@ import (
 	"strings"
 	"unicode"
     "os"
+    "strconv"
     "bufio"
     "io/ioutil"
     "golang.org/x/net/idna"
@@ -36,8 +37,11 @@ func get_public_suffix_list() {
     if len(local_psl) > 0 {
         //Read in the input credentials 
         psl_raw, err := ioutil.ReadFile(local_psl)
-        psl_raw = []byte(psl_raw)
-        fmt.Println(psl_raw)
+        if err != nil {
+            psl_raw = []byte(psl_raw)
+            fmt.Println(psl_raw)
+        }
+        
     } else {
         fmt.Println("Error, couldn't read from the scanner")
     }
@@ -81,13 +85,56 @@ func main() {
 	normalize(" http://  ")
 }
 
+func compare (url1 string, url2 string) bool {
+    /*
+    Check if url1 and url2 are the same after normalizing both.
+    >>> compare("http://examPLe.com:80/abc?x=&b=1", "http://eXAmple.com/abc?b=1")
+    True
+    */
+    if normalize(url1) == normalize(url2) {
+        return true
+    } else {
+        return false
+    }
+}
+
+
 func normalize(url string) {
 	/*	Normalize a URL.
     	>>> normalize("hTtp://ExAMPLe.COM:80")
     	should produce => "http://example.com/"
     */ 
-    url = SpaceMap(url)
-    fmt.Println(url)
+
+    url = SpaceMap(url) // The equivalent of strip 
+    if url == ""{
+        return ""
+    }
+    parts := strings.Fields(url) //This is similar to split in Python
+    if parts.scheme {
+        netloc := parts.netloc
+        path := parts.path
+        if stringInSlice(parts.scheme, SCHEMES) {
+            path := normalize_path(parts.path)
+        }
+    // url is relative, netloc (if present) is part of path
+    } else {
+        netloc = parts.path
+        path = ""
+        if strings.Contains(netloc,"/") {
+            
+            parts := strings.Split(netloc,"/")
+            netloc := parts[0]
+            path_raw := parts[1]
+            path = normalize_path("/" + path_raw)
+        }
+    }
+    username, password, host, port = split_netloc(netloc)
+    host = normalize_host(host)
+    port = _normalize_port(parts.scheme, port)
+    query = normalize_query(parts.query)
+    fragment = normalize_fragment(parts.fragment)
+    return construct(URL(parts.scheme, username, password, None, host, None,
+                         port, path, query, fragment, None))
 
 }
 
@@ -174,7 +221,8 @@ func split(url string) (scheme, netloc, path, query, fragment string) {
         substring := url[:scheme_end]
         for i := 0; i < len(substring); i++ {
             sub_str := substring[i]
-            if strings.Contains(SCHEME_CHARS, sub_str) {
+            str := convert(sub_str)
+            if strings.Contains(SCHEME_CHARS, str) {
                 break
             }
         }
@@ -266,4 +314,9 @@ func min(a, b int) int {
         return a
     }
     return b
+}
+
+func convert( b byte ) string {   
+    s := strconv.Itoa(int(b))
+    return s
 }

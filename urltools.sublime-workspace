@@ -1,0 +1,487 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"net",
+				"netloc"
+			],
+			[
+				"ma",
+				"main_str"
+			],
+			[
+				"enc",
+				"encoded_str"
+			],
+			[
+				"deco",
+				"decoded_split"
+			],
+			[
+				"por",
+				"port_scheme"
+			],
+			[
+				"sche",
+				"scheme"
+			],
+			[
+				"De",
+				"DEFAULT_PORT"
+			],
+			[
+				"io",
+				"ioutil"
+			],
+			[
+				"SC",
+				"SCHEME_CHARS"
+			],
+			[
+				"scheme",
+				"scheme_end"
+			],
+			[
+				"spli",
+				"split_arr"
+			],
+			[
+				"sp",
+				"split_arr"
+			],
+			[
+				"temp",
+				"templ"
+			],
+			[
+				"te",
+				"template"
+			],
+			[
+				"jo",
+				"job2"
+			],
+			[
+				"norma",
+				"normalize_host"
+			],
+			[
+				"local",
+				"local_psl"
+			],
+			[
+				"value",
+				"value"
+			],
+			[
+				"valu",
+				"value"
+			],
+			[
+				"v",
+				"value"
+			],
+			[
+				"le",
+				"left"
+			],
+			[
+				"columns",
+				"columnNames"
+			],
+			[
+				"srtoke",
+				"strokeStyle"
+			],
+			[
+				"of",
+				"offsetY"
+			],
+			[
+				"off",
+				"offsetX"
+			],
+			[
+				"las",
+				"lastX"
+			],
+			[
+				"o",
+				"offsetY"
+			],
+			[
+				"la",
+				"lastY"
+			],
+			[
+				"get",
+				"getFullYear"
+			],
+			[
+				"sec",
+				"secondsDegrees"
+			],
+			[
+				"seco",
+				"secondHand"
+			],
+			[
+				"se",
+				"seconds"
+			],
+			[
+				"set",
+				"setDate"
+			],
+			[
+				"tran",
+				"transition-timing-function"
+			],
+			[
+				"ox",
+				"box-shadow"
+			],
+			[
+				"bor",
+				"border-radius"
+			],
+			[
+				"bo",
+				"border"
+			],
+			[
+				"wid",
+				"width"
+			],
+			[
+				"align",
+				"align-items"
+			],
+			[
+				"font",
+				"font-size"
+			],
+			[
+				"proto",
+				"protoRabbit"
+			],
+			[
+				"chick",
+				"chickenString"
+			],
+			[
+				"co",
+				"cowString"
+			],
+			[
+				"fu",
+				"fun	Function"
+			],
+			[
+				"ba",
+				"background-color"
+			],
+			[
+				"di",
+				"div	Tag"
+			],
+			[
+				"margin",
+				"margin-right"
+			],
+			[
+				"marg",
+				"margin-left"
+			],
+			[
+				"fon",
+				"font-size"
+			],
+			[
+				"margi",
+				"margin-top"
+			],
+			[
+				"wi",
+				"width"
+			],
+			[
+				"al",
+				"text-align"
+			],
+			[
+				"st",
+				"style	Tag"
+			],
+			[
+				"tex",
+				"text-decoration"
+			],
+			[
+				"supplier",
+				"suppliersData"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 392.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/saopayne/go/src/github.com/saopayne/hello/hello.go",
+		"/Users/saopayne/PycharmProjects/PYML/ch06/install.py",
+		"/Users/saopayne/Desktop/hello.go",
+		"/Users/saopayne/Desktop/newroads.c",
+		"/Users/saopayne/Downloads/notebook.ipynb",
+		"/Users/saopayne/Documents/Work/OSS/install_superpack.sh",
+		"/Users/saopayne/Desktop/api_python.py",
+		"/Users/saopayne/Downloads/groovycsv-master/test/com/xlson/groovycsv/AutoDetectHandlerSpec.groovy",
+		"/Users/saopayne/Downloads/SSDump20161231/SSDump20161231/socialshift_sales_item.sql",
+		"/Users/saopayne/Downloads/SSDump20161231/SSDump20161231/socialshift_bill.sql",
+		"/Users/saopayne/Downloads/SocialShiftDump20161230/SocialShiftDump20161230/SocialShiftDump20161230/socialshift_sales_item.sql",
+		"/Users/saopayne/Downloads/SocialShiftDump20161230/SocialShiftDump20161230/SocialShiftDump20161230/socialshift_role.sql",
+		"/Users/saopayne/Downloads/SocialShiftDump20161230/SocialShiftDump20161230/SocialShiftDump20161230/socialshift_requestmap.sql",
+		"/Users/saopayne/Downloads/SocialShiftDump20161230/SocialShiftDump20161230/SocialShiftDump20161230/socialshift_phone_number.sql",
+		"/Users/saopayne/Downloads/SocialShiftDump20161230/SocialShiftDump20161230/SocialShiftDump20161230/socialshift_bill_item.sql",
+		"/Users/saopayne/Downloads/SocialShiftDump20161230/SocialShiftDump20161230/SocialShiftDump20161230/socialshift_organization.sql",
+		"/Users/saopayne/Desktop/test_eloquent.js",
+		"/Users/saopayne/Documents/Work/ChatDesk/Frontend-designs/Socialshift-Invoice/style_history.css",
+		"/Users/saopayne/Documents/Work/ChatDesk/Self-Service/Self_Service_Frontend/index.html",
+		"/Users/saopayne/Downloads/bucketadmin/themeforest-6642985-bucket-admin-bootstrap-3-responsive-flat-dashboard/BucketAdmin ver - 1.4/html/profile.html",
+		"/Users/saopayne/Documents/Work/ChatDesk/Self-Service/Self_Service_Frontend/profile.html",
+		"/Users/saopayne/Documents/Work/ChatDesk/Self-Service/Self_Service_Frontend/js/dashboard.js",
+		"/Users/saopayne/Downloads/bucketadmin/themeforest-6642985-bucket-admin-bootstrap-3-responsive-flat-dashboard/BucketAdmin ver - 1.4/html/general.html",
+		"/Users/saopayne/Downloads/bucketadmin/themeforest-6642985-bucket-admin-bootstrap-3-responsive-flat-dashboard/BucketAdmin ver - 1.4/html/js/dashboard.js",
+		"/Users/saopayne/Documents/Work/ChatDesk/Self-Service/Self_Service_Frontend/js/chart-js/Chart.js",
+		"/Users/saopayne/Documents/Work/ChatDesk/Self-Service/Self_Service_Frontend/js/toggle-init.js",
+		"/Users/saopayne/Documents/Work/Cloudshot/CS_Pilot_Phase_Document.txt",
+		"/Users/saopayne/Downloads/sangalo-campaign-dashbpard-ui/production/images/back_disabled.png",
+		"/Users/saopayne/Downloads/sangalo-campaign-dashbpard-ui/production/form.html",
+		"/Users/saopayne/Downloads/sangalo-campaign-dashbpard-ui/production/page_500.html",
+		"/Users/saopayne/Downloads/sangalo-campaign-dashbpard-ui/production/page_404.html",
+		"/Users/saopayne/Downloads/sangalo-campaign-dashbpard-ui/production/page_403.html",
+		"/Users/saopayne/Downloads/gentelella-1.3.0/documentation/index.html",
+		"/Users/saopayne/Downloads/gentelella-1.3.0/LICENSE.txt",
+		"/Users/saopayne/Downloads/gentelella-1.3.0/production/xx.html",
+		"/Users/saopayne/Downloads/gentelella-1.3.0/production/tables.html",
+		"/Users/saopayne/Downloads/gentelella-1.3.0/production/index.html",
+		"/Users/saopayne/Downloads/gentelella-1.3.0/production/pricing_tables.html",
+		"/Users/saopayne/Downloads/gentelella-1.3.0/production/plain_page.html",
+		"/Users/saopayne/Downloads/gentelella-1.3.0/production/map.html",
+		"/Users/saopayne/Downloads/gentelella-1.3.0/production/fixed_sidebar.html",
+		"/Users/saopayne/Downloads/gentelella-1.3.0/production/form_wizards.html",
+		"/Users/saopayne/Documents/Work/ML/machinelearninginaction/Ch09/regTrees.py",
+		"/Users/saopayne/Documents/Work/ChatDesk/elevator/js/chart.js",
+		"/Users/saopayne/Documents/Work/ChatDesk/elevator/mail/contact_me.php",
+		"/Users/saopayne/Documents/Work/ChatDesk/elevator/css/style.css",
+		"/Users/saopayne/Documents/Work/ChatDesk/elevator/js/script.js",
+		"/Users/saopayne/Documents/Work/ChatDesk/elevator/register.html",
+		"/Users/saopayne/Documents/Work/ML/machinelearninginaction/Ch08/regression.py",
+		"/Users/saopayne/Documents/Work/ML/machinelearninginaction/Ch06/svmMLiA.py",
+		"/Users/saopayne/Documents/Work/ML/machinelearninginaction/Ch05/logRegres.py",
+		"/Users/saopayne/Documents/Work/Sangalo/Report/Sangalo_FreeBasics_Update.doc",
+		"/Users/saopayne/Desktop/sangalo_web/app/View/Themed/Mobile/Elements/menu_main.ctp",
+		"/Users/saopayne/Desktop/banner_test.html",
+		"/<html>",
+		"/Users/saopayne/Documents/CommonAlgos/InvertBinaryTree.java",
+		"/Users/saopayne/Desktop/play.swift",
+		"/Users/saopayne/Desktop/test_2014-09-15.sql",
+		"/Users/saopayne/Desktop/db.sql",
+		"/Users/saopayne/kibana-4.5.1-darwin-x64/config/kibana.yml",
+		"/Users/saopayne/Documents/Work/Sangalo/CakTaskOne/css/style.css",
+		"/Users/saopayne/Documents/Work/Sangalo/CakTaskOne/js/index.js",
+		"/Users/saopayne/Documents/Linux Files/Desktop/BITS  to ATOMS/Healthfacts/User Login Credentials~",
+		"/private/var/folders/wx/pkj4w7x53r7bw16nj68yljhm0000gn/T/fz3temp-1/PasswordController.php",
+		"/private/var/folders/wx/pkj4w7x53r7bw16nj68yljhm0000gn/T/fz3temp-1/routes.php",
+		"/private/var/folders/wx/pkj4w7x53r7bw16nj68yljhm0000gn/T/fz3temp-1/QuestionController.php",
+		"/private/var/folders/wx/pkj4w7x53r7bw16nj68yljhm0000gn/T/fz3temp-1/UserController.php",
+		"/private/var/folders/wx/pkj4w7x53r7bw16nj68yljhm0000gn/T/fz3temp-1/app.php",
+		"/private/var/folders/wx/pkj4w7x53r7bw16nj68yljhm0000gn/T/fz3temp-1/ServicesController.php",
+		"/private/var/folders/wx/pkj4w7x53r7bw16nj68yljhm0000gn/T/fz3temp-1/SuppliersController.php",
+		"/Users/saopayne/Downloads/iQube - Submitted by Babalola Oluwasayo/iQube/Program.cs"
+	],
+	"find":
+	{
+		"height": 23.0
+	},
+	"find_in_files":
+	{
+		"height": 93.0,
+		"where_history":
+		[
+			"/Users/saopayne/Documents/Work/ChatDesk/Self-Service/Self_Service_Frontend",
+			"/Users/saopayne/Downloads/gentelella-1.3.0/vendors"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"= bufio.NewScanner(.Read())\n        // psl_raw",
+			"idna_de",
+			"'",
+			"upda",
+			"contenteditable",
+			"\">\n",
+			");\n",
+			"daily-visit-chart",
+			"profi",
+			">\n"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 23.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 228.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "urltools.sublime-project",
+	"replace":
+	{
+		"height": 42.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 214.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
