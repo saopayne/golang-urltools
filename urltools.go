@@ -110,21 +110,21 @@ func normalize(url string) {
         return ""
     }
     parts := strings.Fields(url) //This is similar to split in Python
-    if parts.scheme {
-        netloc := parts.netloc
-        path := parts.path
-        if stringInSlice(parts.scheme, SCHEMES) {
-            path := normalize_path(parts.path)
+    if parts[0] != "" {
+        netloc := parts[1]
+        path := parts[2]
+        if stringInSlice(parts[0], SCHEMES) {
+            path := normalize_path(parts[2])
         }
     // url is relative, netloc (if present) is part of path
     } else {
-        netloc = parts.path
+        netloc = parts[2]
         path = ""
         if strings.Contains(netloc,"/") {
             
-            parts := strings.Split(netloc,"/")
-            netloc := parts[0]
-            path_raw := parts[1]
+            parts_tmp := strings.Split(netloc,"/")
+            netloc := parts_tmp[0]
+            path_raw := parts_tmp[1]
             path = normalize_path("/" + path_raw)
         }
     }
@@ -137,6 +137,41 @@ func normalize(url string) {
                          port, path, query, fragment, None))
 
 }
+
+func normalize_path(path){
+    /*  Normalize path: collapse etc.
+        >>> normalize_path('/a/b///c')
+        '/a/b/c'
+    */
+    if path in ['//', '/', '']:
+        return '/'
+    npath = normpath(unquote(path, exceptions=QUOTE_EXCEPTIONS['path']))
+    if path[-1] == '/' and npath != '/':
+        npath += '/'
+    return npath
+}
+
+
+func normalize_query(query){
+    """Normalize query: sort params by name, remove params without value.
+    >>> normalize_query('z=3&y=&x=1')
+    'x=1&z=3'
+    """
+    if query == "" or len(query) <= 2{
+        return ""
+    }
+    nquery = unquote(query, exceptions=QUOTE_EXCEPTIONS['query'])
+    params = nquery.split('&')
+    nparams = []
+    for param in params:
+        if  s'=' in param:
+            k, v = param.split('=', 1)
+            if k and v:
+                nparams.append("%s=%s" % (k, v))
+    nparams.sort()
+    return '&'.join(nparams)
+}
+
 
 func normalize_port(scheme string, port string) string {
    /* Return port if it is not default port, else None.
