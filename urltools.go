@@ -121,7 +121,6 @@ func normalize(url string) {
         netloc = parts[2]
         path = ""
         if strings.Contains(netloc,"/") {
-            
             parts_tmp := strings.Split(netloc,"/")
             netloc := parts_tmp[0]
             path_raw := parts_tmp[1]
@@ -138,36 +137,43 @@ func normalize(url string) {
 
 }
 
-func normalize_path(path){
+func normalize_path(path string){
     /*  Normalize path: collapse etc.
-        >>> normalize_path('/a/b///c')
-        '/a/b/c'
+        >>> normalize_path("/a/b///c")
+        "/a/b/c"
     */
-    if path in ['//', '/', '']:
-        return '/'
-    npath = normpath(unquote(path, exceptions=QUOTE_EXCEPTIONS['path']))
-    if path[-1] == '/' and npath != '/':
-        npath += '/'
+    path_list := []string{"//", "/", "",}
+    if stringInSlice(path, path_list){
+        return "/"
+    }
+    npath := normpath(unquote(path, exceptions=QUOTE_EXCEPTIONS["path"]))
+    if path[-1] == "/" && npath != "/"{
+        npath += "/"
+    }
     return npath
 }
 
 
 func normalize_query(query){
-    """Normalize query: sort params by name, remove params without value.
-    >>> normalize_query('z=3&y=&x=1')
-    'x=1&z=3'
-    """
+    /*
+        Normalize query: sort params by name, remove params without value.
+        >>> normalize_query("z=3&y=&x=1")
+        "x=1&z=3"
+    */
     if query == "" or len(query) <= 2{
         return ""
     }
-    nquery = unquote(query, exceptions=QUOTE_EXCEPTIONS['query'])
-    params = nquery.split('&')
+    nquery = unquote(query, exceptions=QUOTE_EXCEPTIONS["query"])
+    params = nquery.split("&")
     nparams = []
-    for param in params:
-        if  s'=' in param:
-            k, v = param.split('=', 1)
-            if k and v:
+    for param in params{
+        if  s"=" in param{
+            k, v = param.split("=", 1)
+            if k and v{
                 nparams.append("%s=%s" % (k, v))
+            }
+        }
+    }
     nparams.sort()
     return '&'.join(nparams)
 }
@@ -208,9 +214,83 @@ func _idna_encode(s string) string{
     return encoded_str
 }
 
-func parameterize_url() {
-    
+func unquote(text string, exceptions=[]){
+    /*
+        Unquote a text but ignore the exceptions.
+        >>> unquote(foo%23bar")
+        "foo#bar"
+        >>> unquote("foo%23bar", ["#"])
+        "foo%23bar"
+    */
+    if not text{
+        if text is None{
+            raise TypeError('None object cannot be unquoted')
+        }
+        else{
+            return text
+        }
+    }
+    if "%" not in text:
+        return text
+    s = text.split("%")
+    res = [s[0]]
+    for h in s[1:]{
+        c = _hextochr.get(h[:2])
+        if c && c not in exceptions{
+            if len(h) > 2{
+                res.append(c + h[2:])
+            }
+            else{
+                res.append(c)
+            }
+        }
+        else{
+            res.append("%" + h)
+        }
+    }
+    return "".join(res)
 }
+
+func parse(url string){
+    /*
+        Parse a URL.
+        >>> parse('http://example.com/foo/')
+        URL(scheme='http', ..., domain='example', tld='com', ..., path='/foo/', ...)
+    */
+    parts = split(url)
+    if parts.scheme:
+        username, password, host, port = split_netloc(parts.netloc)
+        subdomain, domain, tld = split_host(host)
+    else:
+        username = password = subdomain = domain = tld = port = ""
+    return URL(parts.scheme, username, password, subdomain, domain, tld,
+               port, parts.path, parts.query, parts.fragment, url)
+}
+
+
+func extract(url string){
+    /*
+        Extract as much information from a (relative) URL as possible.
+        >>> extract('example.com/abc')
+        URL(..., domain='example', tld='com', ..., path='/abc', ...)
+    */
+    parts = split(url)
+    if parts.scheme:
+        netloc = parts.netloc
+        path = parts.path
+    else:
+        netloc = parts.path
+        path = ""
+        if "/" in netloc:
+            netloc, path_raw = netloc.split("/", 1)
+            path = "/" + path_raw
+    username, password, host, port = split_netloc(netloc)
+    subdomain, domain, tld = split_host(host)
+    return URL(parts.scheme, username, password, subdomain, domain, tld,
+               port, path, parts.query, parts.fragment, url)
+
+}
+
 
 // Read the file and convert to lines
 func File2lines(filePath string) []string {
@@ -237,8 +317,8 @@ func File2lines(filePath string) []string {
 */
 func split(url string) (scheme, netloc, path, query, fragment string) {
     /* Split URL into scheme, netloc, path, query and fragment.
-    >>> split('http://www.example.com/abc?x=1&y=2#foo')
-    SplitResult(scheme='http', netloc='www.example.com', path='/abc', query='x=1&y=2', fragment='foo')
+    >>> split("http://www.example.com/abc?x=1&y=2#foo")
+    SplitResult(scheme="http", netloc="www.example.com", path="/abc", query="x=1&y=2", fragment="foo")
     */
     // var scheme string  = ""
     // var path string = ""
@@ -320,6 +400,92 @@ func split(url string) (scheme, netloc, path, query, fragment string) {
     return 
 
 }
+
+func _clean_netloc(netloc){
+    /*
+        Remove trailing "." and ":"" and tolower.
+        >>> _clean_netloc("eXample.coM:")
+        "example.com"
+    */
+    try:
+        return netloc.rstrip(".:").lower()
+    except:
+        return netloc.rstrip(".:").decode("utf-8").lower().encode("utf-8")
+}
+
+func split_netloc(netloc){
+    /*
+        Split netloc into username, password, host and port.
+        >>> split_netloc("foo:bar@www.example.com:8080")
+        ("foo", "bar", "www.example.com", "8080")
+    */
+    username = password = host = port = ""
+    if "@" in netloc:
+        user_pw, netloc = netloc.split("@", 1)
+        if ":" in user_pw{
+            username, password = user_pw.split(":", 1)
+        }
+        else{
+            username = user_pw
+        }
+    netloc = _clean_netloc(netloc)
+    if ":" in netloc and netloc[-1] != "]"{
+        host, port = netloc.rsplit(":", 1)
+    }
+    else{
+        host = netloc
+    }
+    return username, password, host, port
+}
+
+
+func split_host(host){
+    /*
+        Use the Public Suffix List to split host into subdomain, domain and tld.
+        >>> split_host("foo.bar.co.uk")
+        ("foo", "bar", "co.uk")
+    */
+    // host is IPv6?
+    if "[" in host{
+        return "", host, ""
+    }
+    // host is IPv4?
+    for c in host{
+        if c not in IP_CHARS{
+            break
+        }
+    }
+    else{
+        return "", host, ""
+    }
+    // host is a domain name
+    domain = subdomain = tld = ""
+    parts = host.split(".")
+    for i in range(len(parts)){
+        tld = '.'.join(parts[i:])
+        wildcard_tld = '*.' + tld
+        exception_tld = '!' + tld
+        if exception_tld in PSL{
+            domain = '.'.join(parts[:i+1])
+            tld = '.'.join(parts[i+1:])
+            break
+        }
+        if tld in PSL{
+            domain = '.'.join(parts[:i])
+            break
+        }
+        if wildcard_tld in PSL{
+            domain = '.'.join(parts[:i-1])
+            tld = '.'.join(parts[i-1:])
+            break
+        }
+    }
+    if '.' in domain{
+        subdomain, domain = domain.rsplit('.', 1)
+    }
+    return subdomain, domain, tld
+}
+
 
 // This is equivalent to strip() which removes all trailing white spaces
 func SpaceMap(str string) string {
