@@ -6,6 +6,7 @@ import (
 	"unicode"
     "os"
     "strconv"
+    "sort"
     "bufio"
     "io/ioutil"
     "golang.org/x/net/idna"
@@ -16,6 +17,10 @@ type ParsedUrl string
 type namedtuple struct {
     a string 
     b interface {}
+}
+
+type TypeError interface {
+    Errors() string
 }
 
 var __all__ = []string {"URL", "SplitResult", "parse", "extract", "construct", "normalize",
@@ -146,7 +151,7 @@ func normalize_path(path string){
     if stringInSlice(path, path_list){
         return "/"
     }
-    npath := normpath(unquote(path, exceptions=QUOTE_EXCEPTIONS["path"]))
+    npath := normpath(unquote(path, QUOTE_EXCEPTIONS["path"]))
     if path[-1] == "/" && npath != "/"{
         npath += "/"
     }
@@ -160,22 +165,23 @@ func normalize_query(query){
         >>> normalize_query("z=3&y=&x=1")
         "x=1&z=3"
     */
-    if query == "" or len(query) <= 2{
+    if query == "" || len(query) <= 2{
         return ""
     }
-    nquery = unquote(query, exceptions=QUOTE_EXCEPTIONS["query"])
+    nquery = unquote(query, QUOTE_EXCEPTIONS["query"])
     params = nquery.split("&")
-    nparams = []
-    for param in params{
-        if  s"=" in param{
-            k, v = param.split("=", 1)
-            if k and v{
-                nparams.append("%s=%s" % (k, v))
+    nparams = [] string
+    for i := 0; i < params.length; i++ {
+        if strings.Contains("=", params[i]){
+            s = strings.Split(params[i], "=")
+            k, v = s[0], s[1]
+            if k!=nil && v!= nil {
+                nparams = append(nparams,"%s=%s" % k, v)
             }
         }
     }
-    nparams.sort()
-    return '&'.join(nparams)
+    sort(nparams)
+    return strings.Join(nparams, "&")
 }
 
 
@@ -214,7 +220,7 @@ func _idna_encode(s string) string{
     return encoded_str
 }
 
-func unquote(text string, exceptions=[]){
+func unquote(text string, exceptions []string) string{
     /*
         Unquote a text but ignore the exceptions.
         >>> unquote(foo%23bar")
@@ -222,19 +228,19 @@ func unquote(text string, exceptions=[]){
         >>> unquote("foo%23bar", ["#"])
         "foo%23bar"
     */
-    if not text{
-        if text is None{
-            raise TypeError('None object cannot be unquoted')
-        }
-        else{
+    if text == nil{
+        if text != ""{
+            return errors.New("None object cannot be unquoted")
+        } else {
             return text
         }
     }
-    if "%" not in text:
+    if !strings.Contains(text, "%") {
         return text
-    s = text.split("%")
-    res = [s[0]]
-    for h in s[1:]{
+    }
+    s := strings.Split(text, "%")
+    res := [] string{s[0]}
+    for h in s[1:] {
         c = _hextochr.get(h[:2])
         if c && c not in exceptions{
             if len(h) > 2{
@@ -248,7 +254,7 @@ func unquote(text string, exceptions=[]){
             res.append("%" + h)
         }
     }
-    return "".join(res)
+    return strings.join(res, "")
 }
 
 func parse(url string){
@@ -401,7 +407,7 @@ func split(url string) (scheme, netloc, path, query, fragment string) {
 
 }
 
-func _clean_netloc(netloc){
+func _clean_netloc(netloc string){
     /*
         Remove trailing "." and ":"" and tolower.
         >>> _clean_netloc("eXample.coM:")
@@ -413,7 +419,7 @@ func _clean_netloc(netloc){
         return netloc.rstrip(".:").decode("utf-8").lower().encode("utf-8")
 }
 
-func split_netloc(netloc){
+func split_netloc(netloc string){
     /*
         Split netloc into username, password, host and port.
         >>> split_netloc("foo:bar@www.example.com:8080")
@@ -439,7 +445,7 @@ func split_netloc(netloc){
 }
 
 
-func split_host(host){
+func split_host(host string){
     /*
         Use the Public Suffix List to split host into subdomain, domain and tld.
         >>> split_host("foo.bar.co.uk")
