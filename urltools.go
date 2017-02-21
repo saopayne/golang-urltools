@@ -84,9 +84,12 @@ var QUOTE_EXCEPTIONS = map[string]string {
     "fragment": " +#",
 }
 
-
+var _hextochr = make(map[string]string, 256)
 
 func main() {
+    for i := range(256){
+        _hextochr(i) = "%02x" % i      
+    }
 	normalize(" http://  ")
 }
 
@@ -184,6 +187,15 @@ func normalize_query(query){
     return strings.Join(nparams, "&")
 }
 
+func normalize_fragment(fragment string){
+    /* Normalize fragment (unquote with exceptions only).*/
+    return unquote(fragment, QUOTE_EXCEPTIONS["fragment"])
+}
+
+
+// _hextochr = dict(('%02x' % i, chr(i)) for i in range(256))
+// _hextochr.update(dict(('%02X' % i, chr(i)) for i in range(256)))
+
 
 func normalize_port(scheme string, port string) string {
    /* Return port if it is not default port, else None.
@@ -240,21 +252,19 @@ func unquote(text string, exceptions []string) string{
     }
     s := strings.Split(text, "%")
     res := [] string{s[0]}
-    for h in s[1:] {
+    for _,h := s[1:] {
         c = _hextochr.get(h[:2])
-        if c && c not in exceptions{
+        if c != nil && !(strings.Contains(exceptions, c)){
             if len(h) > 2{
                 res.append(c + h[2:])
-            }
-            else{
+            } else {
                 res.append(c)
             }
-        }
-        else{
+        } else{
             res.append("%" + h)
         }
     }
-    return strings.join(res, "")
+    return strings.Join(res, "")
 }
 
 func parse(url string){
@@ -264,11 +274,17 @@ func parse(url string){
         URL(scheme='http', ..., domain='example', tld='com', ..., path='/foo/', ...)
     */
     parts = split(url)
-    if parts.scheme:
+    if parts.scheme {
         username, password, host, port = split_netloc(parts.netloc)
         subdomain, domain, tld = split_host(host)
-    else:
-        username = password = subdomain = domain = tld = port = ""
+    } else {
+        username := "" 
+        password := ""
+        subdomain := ""
+        domain := ""
+        tld := ""
+        port := ""
+    }
     return URL(parts.scheme, username, password, subdomain, domain, tld,
                port, parts.path, parts.query, parts.fragment, url)
 }
@@ -281,15 +297,17 @@ func extract(url string){
         URL(..., domain='example', tld='com', ..., path='/abc', ...)
     */
     parts = split(url)
-    if parts.scheme:
-        netloc = parts.netloc
-        path = parts.path
-    else:
-        netloc = parts.path
-        path = ""
-        if "/" in netloc:
+    if parts.scheme{
+        netloc := parts.netloc
+        path := parts.path
+    } else {
+        netloc := parts.path
+        path := ""
+        if strings.Contains(netloc, "/") {
             netloc, path_raw = netloc.split("/", 1)
             path = "/" + path_raw
+        }
+    }
     username, password, host, port = split_netloc(netloc)
     subdomain, domain, tld = split_host(host)
     return URL(parts.scheme, username, password, subdomain, domain, tld,
@@ -419,26 +437,28 @@ func _clean_netloc(netloc string){
         return netloc.rstrip(".:").decode("utf-8").lower().encode("utf-8")
 }
 
-func split_netloc(netloc string){
+func split_netloc(netloc string) (string, string, string, string) {
     /*
         Split netloc into username, password, host and port.
         >>> split_netloc("foo:bar@www.example.com:8080")
         ("foo", "bar", "www.example.com", "8080")
     */
-    username = password = host = port = ""
-    if "@" in netloc:
+    username := ""
+    password := ""
+    host := ""
+    port := ""
+    if strings.Contains(netloc, "@") {
         user_pw, netloc = netloc.split("@", 1)
-        if ":" in user_pw{
+        if strings.Contains(user_pw, ":"){
             username, password = user_pw.split(":", 1)
-        }
-        else{
+        } else {
             username = user_pw
         }
-    netloc = _clean_netloc(netloc)
-    if ":" in netloc and netloc[-1] != "]"{
-        host, port = netloc.rsplit(":", 1)
     }
-    else{
+    netloc = _clean_netloc(netloc)
+    if strings.Contains(netloc, ":") && netloc[-1] != "]"{
+        host, port = netloc.rsplit(":", 1)
+    } else {
         host = netloc
     }
     return username, password, host, port
@@ -452,42 +472,43 @@ func split_host(host string){
         ("foo", "bar", "co.uk")
     */
     // host is IPv6?
-    if "[" in host{
+    if strings.Contains(host, "["){
         return "", host, ""
     }
     // host is IPv4?
-    for c in host{
-        if c not in IP_CHARS{
+    for c := host{
+        if !strings.Contains(IP_CHARS, c){
             break
-        }
-    }
-    else{
+        } else {
         return "", host, ""
     }
+    }
     // host is a domain name
-    domain = subdomain = tld = ""
+    domain := ""
+    subdomain := "" 
+    tld := ""
     parts = host.split(".")
     for i in range(len(parts)){
-        tld = '.'.join(parts[i:])
-        wildcard_tld = '*.' + tld
-        exception_tld = '!' + tld
+        tld = ".".join(parts[i:])
+        wildcard_tld = "*." + tld
+        exception_tld = "!" + tld
         if exception_tld in PSL{
-            domain = '.'.join(parts[:i+1])
-            tld = '.'.join(parts[i+1:])
+            domain = ".".join(parts[:i+1])
+            tld = ".".join(parts[i+1:])
             break
         }
         if tld in PSL{
-            domain = '.'.join(parts[:i])
+            domain = ".".join(parts[:i])
             break
         }
         if wildcard_tld in PSL{
-            domain = '.'.join(parts[:i-1])
-            tld = '.'.join(parts[i-1:])
+            domain = ".".join(parts[:i-1])
+            tld = ".".join(parts[i-1:])
             break
         }
     }
-    if '.' in domain{
-        subdomain, domain = domain.rsplit('.', 1)
+    if "." in domain{
+        subdomain, domain = domain.rsplit(".", 1)
     }
     return subdomain, domain, tld
 }
