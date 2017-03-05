@@ -6,7 +6,6 @@ import (
 	"unicode"
     "os"
     "strconv"
-    "sort"
     "bufio"
     "io/ioutil"
     "golang.org/x/net/idna"
@@ -87,7 +86,7 @@ var QUOTE_EXCEPTIONS = map[string]string {
 var _hextochr = make(map[string]string, 256)
 
 func main() {
-    for i := range(256){
+    for i := 0; i < 256; i++ {
         _hextochr(i) = "%02x" % i      
     }
 	normalize(" http://  ")
@@ -107,7 +106,7 @@ func compare (url1 string, url2 string) bool {
 }
 
 
-func normalize(url string) {
+func normalize(url string) string {
 	/*	Normalize a URL.
     	>>> normalize("hTtp://ExAMPLe.COM:80")
     	should produce => "http://example.com/"
@@ -126,20 +125,20 @@ func normalize(url string) {
         }
     // url is relative, netloc (if present) is part of path
     } else {
-        netloc = parts[2]
-        path = ""
+        netloc := parts[2]
+        path := ""
         if strings.Contains(netloc,"/") {
             parts_tmp := strings.Split(netloc,"/")
             netloc := parts_tmp[0]
             path_raw := parts_tmp[1]
-            path = normalize_path("/" + path_raw)
+            path := normalize_path("/" + path_raw)
         }
     }
-    username, password, host, port = split_netloc(netloc)
+    username, password, host, port := split_netloc(netloc)
     host = normalize_host(host)
-    port = _normalize_port(parts.scheme, port)
-    query = normalize_query(parts.query)
-    fragment = normalize_fragment(parts.fragment)
+    port = normalize_port(parts.scheme, port)
+    query := normalize_query(parts.query)
+    fragment := normalize_fragment(parts.fragment)
     return construct(URL(parts.scheme, username, password, None, host, None,
                          port, path, query, fragment, None))
 
@@ -162,7 +161,7 @@ func normalize_path(path string){
 }
 
 
-func normalize_query(query){
+func normalize_query(query string){
     /*
         Normalize query: sort params by name, remove params without value.
         >>> normalize_query("z=3&y=&x=1")
@@ -187,7 +186,7 @@ func normalize_query(query){
     return strings.Join(nparams, "&")
 }
 
-func normalize_fragment(fragment string){
+func normalize_fragment(fragment string) {
     /* Normalize fragment (unquote with exceptions only).*/
     return unquote(fragment, QUOTE_EXCEPTIONS["fragment"])
 }
@@ -203,7 +202,7 @@ func normalize_port(scheme string, port string) string {
       >>> normalize_port("http", "8080")
       '8080'
     */
-    if stringInSlice(scheme,SCHEMES){
+    if stringInSlice(scheme, SCHEMES){
         return port
     }
     port_scheme := DEFAULT_PORT[scheme]
@@ -213,7 +212,7 @@ func normalize_port(scheme string, port string) string {
     return port
 }
 
-func normalize_host(host string) string{
+func normalize_host(host string) string {
    // Normalize host (decode IDNA).
     if strings.Contains(host, "xn--") {
         return host
@@ -227,12 +226,12 @@ func normalize_host(host string) string{
     return host
 }
 
-func _idna_encode(s string) string{
+func _idna_encode(s string) string {
     encoded_str,_ := idna.ToUnicode(s)
     return encoded_str
 }
 
-func unquote(text string, exceptions []string) string{
+func unquote(text string, exceptions []string) string {
     /*
         Unquote a text but ignore the exceptions.
         >>> unquote(foo%23bar")
@@ -465,7 +464,7 @@ func split_netloc(netloc string) (string, string, string, string) {
 }
 
 
-func split_host(host string){
+func split_host(host string) (string, string, string){
     /*
         Use the Public Suffix List to split host into subdomain, domain and tld.
         >>> split_host("foo.bar.co.uk")
@@ -488,28 +487,29 @@ func split_host(host string){
     subdomain := "" 
     tld := ""
     parts = host.split(".")
-    for i in range(len(parts)){
+    for i := range(len(parts)){
         tld = ".".join(parts[i:])
         wildcard_tld = "*." + tld
         exception_tld = "!" + tld
-        if exception_tld in PSL{
+        if strings.Contains(PSL, exception_tld) {
             domain = ".".join(parts[:i+1])
             tld = ".".join(parts[i+1:])
             break
         }
-        if tld in PSL{
+        if strings.Contains(PSL, tld) {
             domain = ".".join(parts[:i])
             break
         }
-        if wildcard_tld in PSL{
+        if strings.Contains(PSL, wildcard_tld) {
             domain = ".".join(parts[:i-1])
             tld = ".".join(parts[i-1:])
             break
         }
     }
-    if "." in domain{
+    if strings.Contains(domain, ".") {
         subdomain, domain = domain.rsplit(".", 1)
     }
+
     return subdomain, domain, tld
 }
 
